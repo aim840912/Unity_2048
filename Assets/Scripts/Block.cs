@@ -25,8 +25,10 @@ public class Block : MonoBehaviour
 
     public void SetBlock(Node node)
     {
+        if (this.node != null)
+            this.node.OccupiedBlock = null;
         this.node = node;
-        node.OccupiedBlock = this;
+        this.node.OccupiedBlock = this;
     }
 
     public void MergeBlock(Block blockToMergeWith)

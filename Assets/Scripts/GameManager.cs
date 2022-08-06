@@ -77,7 +77,11 @@ public class GameManager : MonoBehaviour
 
     void MoveBlock(Vector2 dir)
     {
-        foreach (var block in _blockList)
+        var orderedBlocks = _blockList.OrderBy(b => b.pos.x).ThenBy(b => b.pos.y).ToList();
+        if (dir == Vector2.right || dir == Vector2.up)
+            orderedBlocks.Reverse();
+
+        foreach (var block in orderedBlocks)
         {
             var currentNode = block.node;
 
@@ -91,10 +95,10 @@ public class GameManager : MonoBehaviour
                 {
                     if (nextNode.OccupiedBlock != null)
                     {
-                        if (nextNode.OccupiedBlock.CanMerge(block.blockNum))
-                        {
-                            block.MergeBlock(nextNode.OccupiedBlock);
-                        }
+                        // if (nextNode.OccupiedBlock.CanMerge(block.blockNum))
+                        // {
+                        //     block.MergeBlock(nextNode.OccupiedBlock);
+                        // }
                     }
                     else if (nextNode.OccupiedBlock == null)
                     {
@@ -103,7 +107,7 @@ public class GameManager : MonoBehaviour
                 }
             } while (currentNode != block.node);
 
-            block.transform.position=block.node.pos;
+            block.transform.position = block.node.pos;
         }
 
         SpawnsNewBlocks();
