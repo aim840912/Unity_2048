@@ -24,11 +24,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.LeftArrow))
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+        if (Input.GetKeyDown(KeyCode.A))
+            MoveBlock(Vector2.left);
+        if (Input.GetKeyDown(KeyCode.D))
             MoveBlock(Vector2.right);
-        }
+        if (Input.GetKeyDown(KeyCode.W))
+            MoveBlock(Vector2.up);
+        if (Input.GetKeyDown(KeyCode.S))
+            MoveBlock(Vector2.down);
     }
 
     void GenerateGrid()
@@ -52,6 +55,7 @@ public class GameManager : MonoBehaviour
             .Where(n => n.OccupiedBlock == null)
             .OrderBy(b => Random.value)
             .ToList();
+
         foreach (var node in freeNodes.Take(1))
         {
             SpawnBlockPos(node);
@@ -65,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     void SpawnBlockPos(Node node)
     {
-        var block = Instantiate(_blockPrefab, node.transform.position, Quaternion.identity);
+        var block = Instantiate(_blockPrefab, node.pos, Quaternion.identity);
         block.Init();
         block.SetBlock(node);
         _blockList.Add(block);
@@ -73,22 +77,33 @@ public class GameManager : MonoBehaviour
 
     void MoveBlock(Vector2 dir)
     {
-        var orderBlocks = _blockList
-            .OrderBy(b => b.transform.position.x)
-            .ThenBy(b => b.transform.position.y)
-            .ToList();
-
-        foreach (var orderBlock in orderBlocks)
+        foreach (var block in _blockList)
         {
-            var nextBlock = orderBlock.node;
+            var currentNode = block.node;
 
             do
             {
-                orderBlock.SetBlock(nextBlock);
+                block.SetBlock(currentNode);
 
-                var possibleNode = GetNodeAtPosition(nextBlock.pos + dir);
-                if (possibleNode.OccupiedBlock != null) { }
-            } while (nextBlock != null);
+                var nextNode = GetNodeAtPosition(currentNode.pos + dir); // 超出就會是null
+
+                if (nextNode != null)
+                {
+                    if (nextNode.OccupiedBlock != null)
+                    {
+                        if (nextNode.OccupiedBlock.CanMerge(block.blockNum))
+                        {
+                            block.MergeBlock(nextNode.OccupiedBlock);
+                        }
+                    }
+                    else if (nextNode.OccupiedBlock == null)
+                    {
+                        currentNode = nextNode;
+                    }
+                }
+            } while (currentNode != block.node);
+
+            block.transform.position=block.node.pos;
         }
 
         SpawnsNewBlocks();
@@ -96,6 +111,6 @@ public class GameManager : MonoBehaviour
 
     Node GetNodeAtPosition(Vector2 pos)
     {
-        return _nodeList.FirstOrDefault(n => n.pos == pos);// FirstOrDefault Linq語法
+        return _nodeList.FirstOrDefault(n => n.pos == pos);
     }
 }

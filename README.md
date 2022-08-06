@@ -1,17 +1,15 @@
 # 2048
 
 
-
 // something new to me
 
 
 TextMeshPro
 
-
 Unity
-    Random.value
+- Random.value
 
 Linq
-    FirstOrDefault
-    OrderBy
-    ThenBy
+- FirstOrDefault
+- OrderBy
+- ThenBy

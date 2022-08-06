@@ -5,10 +5,12 @@ using TMPro;
 
 public class Block : MonoBehaviour
 {
+    public int blockNum;
     public Node node;
     public Vector2 pos => transform.position;
-    int _blackNum;
+    public Block MergingBlock;
 
+    public bool Merging;
     int BlockNum
     {
         get { return Random.value > 0.8f ? 4 : 2; }
@@ -17,8 +19,8 @@ public class Block : MonoBehaviour
 
     public void Init()
     {
-        _blackNum = BlockNum;
-        blockNumText.text = _blackNum.ToString();
+        blockNum = BlockNum;
+        blockNumText.text = blockNum.ToString();
     }
 
     public void SetBlock(Node node)
@@ -29,11 +31,13 @@ public class Block : MonoBehaviour
 
     public void MergeBlock(Block blockToMergeWith)
     {
+        MergingBlock = blockToMergeWith;
         node.OccupiedBlock = null;
+        blockToMergeWith.Merging = true;
     }
 
     public bool CanMerge(int value)
     {
-        return this._blackNum == value;
+        return blockNum == value;
     }
 }
