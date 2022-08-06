@@ -1,32 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class Block : MonoBehaviour
 {
     public Node node;
-    Block MergingBlock;
+
+    int _blackNum;
 
     int BlockNum
     {
         get { return Random.value > 0.8f ? 4 : 2; }
     }
-    public TextMeshProUGUI blockNumText;
+    public TextMeshPro blockNumText;
 
     public void Init()
     {
-        blockNumText.text = BlockNum.ToString();
+        _blackNum = BlockNum;
+        blockNumText.text = _blackNum.ToString();
+    }
+
+    public void SetBlock(Node node)
+    {
+        this.node = node;
+        node.OccupiedBlock = this;
     }
 
     public bool CanMerge(int value)
     {
-        return this.BlockNum == value;
-    }
-
-    public void MergeBlock(Block blockToMergeWith)
-    {
-        MergingBlock = blockToMergeWith;
+        return this._blackNum == value;
     }
 }

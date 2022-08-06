@@ -247,7 +247,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nodePrefab: {fileID: 6313857336754558139, guid: 364950290f80bf04a941efabe0de52bd, type: 3}
-  _blockPrefab: {fileID: 0}
+  _blockPrefab: {fileID: 6562113051917348856, guid: 1dde507d09b73bb44b6a4077f6c53c9e, type: 3}
+  _nodeList: []
+  _blockList: []
 --- !u!4 &805879552
 Transform:
   m_ObjectHideFlags: 0
