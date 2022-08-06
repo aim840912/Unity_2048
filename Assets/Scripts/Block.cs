@@ -6,7 +6,7 @@ using TMPro;
 public class Block : MonoBehaviour
 {
     public Node node;
-
+    public Vector2 pos => transform.position;
     int _blackNum;
 
     int BlockNum
@@ -25,6 +25,11 @@ public class Block : MonoBehaviour
     {
         this.node = node;
         node.OccupiedBlock = this;
+    }
+
+    public void MergeBlock(Block blockToMergeWith)
+    {
+        node.OccupiedBlock = null;
     }
 
     public bool CanMerge(int value)

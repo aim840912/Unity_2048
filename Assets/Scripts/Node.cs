@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+    public Vector2 pos => transform.position;
+
     public Block OccupiedBlock;
 }
