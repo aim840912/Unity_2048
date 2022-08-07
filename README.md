@@ -1,20 +1,20 @@
 # 2048
 
 
-// something new to me
+## Something new to me
 
+<font color=Orange>TextMeshPro</font>
 
-TextMeshPro
-
-Unity
+<font color=Orange>Unity</font>
 - Random.value
 
-Linq
+
+<font color=Orange>Linq</font>
 - FirstOrDefault
 - OrderBy
 - ThenBy
 
-dotween
+<font color=Orange>dotween</font>
 - var sequence = DOTween.Sequence();
 - sequence.Insert();
 - sequence.OnComplete(()=>{});
