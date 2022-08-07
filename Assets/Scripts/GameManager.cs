@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+using DG.Tweening;
+
 public class GameManager : MonoBehaviour
 {
     private int _width = 4;
@@ -75,6 +77,9 @@ public class GameManager : MonoBehaviour
         _blockList.Add(block);
     }
 
+    [SerializeField]
+    private float _travelTime = 0.2f;
+
     void MoveBlock(Vector2 dir)
     {
         var sortBlocks = _blockList.OrderBy(b => b.pos.x).ThenBy(b => b.pos.y).ToList();
@@ -93,26 +98,41 @@ public class GameManager : MonoBehaviour
 
                 if (nextNode != null)
                 {
-                    if (nextNode.OccupiedBlock != null)
+                    if (
+                        nextNode.OccupiedBlock != null
+                        && nextNode.OccupiedBlock.CanMerge(block.blockNum)
+                    )
                     {
-                        // Debug.Log(nextNode.OccupiedBlock.CanMerge(block.blockNum));
-                        if (nextNode.OccupiedBlock.blockNum == currentNode.OccupiedBlock.blockNum)
-                        {
-                            MergeBlocks(nextNode.OccupiedBlock, currentNode.OccupiedBlock);
-                        }
+                        block.MergeBlock(nextNode.OccupiedBlock);
                     }
                     else if (nextNode.OccupiedBlock == null)
                     {
                         currentNode = nextNode;
                     }
                 }
-                // Debug.Log(block.node.pos);
             } while (currentNode != block.node);
-
-            block.transform.position = block.node.pos;
         }
 
         SpawnsNewBlocks();
+
+        var sequence = DOTween.Sequence();
+
+        foreach (var block in sortBlocks)
+        {
+            var movePoint =
+                block.MergingBlock != null ? block.MergingBlock.node.pos : block.node.pos;
+
+            sequence.Insert(0, block.transform.DOMove(movePoint, _travelTime).SetEase(Ease.InQuad));
+        }
+
+        sequence.OnComplete(() =>
+        {
+            var mergeBlocks = sortBlocks.Where(b => b.MergingBlock != null).ToList();
+            foreach (var block in mergeBlocks)
+            {
+                MergeBlocks(block.MergingBlock, block);
+            }
+        });
     }
 
     void MergeBlocks(Block baseBlock, Block mergingBlock)

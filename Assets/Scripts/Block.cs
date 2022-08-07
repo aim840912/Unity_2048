@@ -9,6 +9,7 @@ public class Block : MonoBehaviour
     public Node node;
     public Vector2 pos => transform.position;
     public Block MergingBlock;
+    public bool Merging;
 
     public TextMeshPro blockNumText;
 
@@ -24,6 +25,16 @@ public class Block : MonoBehaviour
             this.node.OccupiedBlock = null;
         this.node = node;
         this.node.OccupiedBlock = this;
-        Debug.Log(this.pos);
     }
+
+    public void MergeBlock(Block blockToMergeWith)
+    {
+        MergingBlock = blockToMergeWith;
+
+        node.OccupiedBlock = null;
+
+        blockToMergeWith.Merging = true;
+    }
+
+    public bool CanMerge(int value) => value == blockNum && !Merging && MergingBlock == null;
 }
