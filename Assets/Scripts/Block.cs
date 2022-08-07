@@ -10,16 +10,11 @@ public class Block : MonoBehaviour
     public Vector2 pos => transform.position;
     public Block MergingBlock;
 
-    public bool Merging;
-    int BlockNum
-    {
-        get { return Random.value > 0.8f ? 4 : 2; }
-    }
     public TextMeshPro blockNumText;
 
-    public void Init()
+    public void Init(int value)
     {
-        blockNum = BlockNum;
+        blockNum = value;
         blockNumText.text = blockNum.ToString();
     }
 
@@ -29,17 +24,6 @@ public class Block : MonoBehaviour
             this.node.OccupiedBlock = null;
         this.node = node;
         this.node.OccupiedBlock = this;
-    }
-
-    public void MergeBlock(Block blockToMergeWith)
-    {
-        MergingBlock = blockToMergeWith;
-        node.OccupiedBlock = null;
-        blockToMergeWith.Merging = true;
-    }
-
-    public bool CanMerge(int value)
-    {
-        return blockNum == value;
+        Debug.Log(this.pos);
     }
 }

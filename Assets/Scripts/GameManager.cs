@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var node in freeNodes.Take(1))
         {
-            SpawnBlockPos(node);
+            SpawnBlockPos(node, Random.value > 0.8f ? 4 : 2);
         }
         Debug.Log(freeNodes.Count());
         if (freeNodes.Count() <= 1)
@@ -67,21 +67,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void SpawnBlockPos(Node node)
+    void SpawnBlockPos(Node node, int value)
     {
         var block = Instantiate(_blockPrefab, node.pos, Quaternion.identity);
-        block.Init();
+        block.Init(value);
         block.SetBlock(node);
         _blockList.Add(block);
     }
 
     void MoveBlock(Vector2 dir)
     {
-        var orderedBlocks = _blockList.OrderBy(b => b.pos.x).ThenBy(b => b.pos.y).ToList();
+        var sortBlocks = _blockList.OrderBy(b => b.pos.x).ThenBy(b => b.pos.y).ToList();
         if (dir == Vector2.right || dir == Vector2.up)
-            orderedBlocks.Reverse();
+            sortBlocks.Reverse();
 
-        foreach (var block in orderedBlocks)
+        foreach (var block in sortBlocks)
         {
             var currentNode = block.node;
 
@@ -95,22 +95,39 @@ public class GameManager : MonoBehaviour
                 {
                     if (nextNode.OccupiedBlock != null)
                     {
-                        // if (nextNode.OccupiedBlock.CanMerge(block.blockNum))
-                        // {
-                        //     block.MergeBlock(nextNode.OccupiedBlock);
-                        // }
+                        // Debug.Log(nextNode.OccupiedBlock.CanMerge(block.blockNum));
+                        if (nextNode.OccupiedBlock.blockNum == currentNode.OccupiedBlock.blockNum)
+                        {
+                            MergeBlocks(nextNode.OccupiedBlock, currentNode.OccupiedBlock);
+                        }
                     }
                     else if (nextNode.OccupiedBlock == null)
                     {
                         currentNode = nextNode;
                     }
                 }
+                // Debug.Log(block.node.pos);
             } while (currentNode != block.node);
 
             block.transform.position = block.node.pos;
         }
 
         SpawnsNewBlocks();
+    }
+
+    void MergeBlocks(Block baseBlock, Block mergingBlock)
+    {
+        var newValue = baseBlock.blockNum * 2;
+        SpawnBlockPos(baseBlock.node, newValue);
+
+        RemoveBlock(baseBlock);
+        RemoveBlock(mergingBlock);
+    }
+
+    void RemoveBlock(Block block)
+    {
+        _blockList.Remove(block);
+        Destroy(block.gameObject);
     }
 
     Node GetNodeAtPosition(Vector2 pos)
